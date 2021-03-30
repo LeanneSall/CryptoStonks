@@ -1,6 +1,5 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -8,6 +7,10 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  Future<http.Response> fetchAlbum() {
+    return http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold();
