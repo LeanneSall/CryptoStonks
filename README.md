@@ -2,6 +2,7 @@
 
 ## Description 
 Mock trading app that allows users to "buy" and "sell" cryptocurrencies and have them create a fake portfolio.
+Created by Leanne Sall for the Mobile Project - Software Systems Developer Program at BCIT
 
 ## Technologies
 * Flutter/Dart
