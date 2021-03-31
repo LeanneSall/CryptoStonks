@@ -10,8 +10,9 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   void getData() async {
-    http.Response response = await http.get(
-        'https://api.coingecko.com/api/v3/coins/dopecoin?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true');
+    http.Response response = await http.get(Uri.https(
+        "https://api.coingecko.com",
+        "/api/v3/coins/dopecoin?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true"));
 
     if (response.statusCode == 200) {
       String data = response.body;

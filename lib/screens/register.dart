@@ -13,6 +13,7 @@ class _RegisterState extends State<Register> {
     final emailField = TextField(
       obscureText: false,
       style: style,
+      onChanged: (value) {},
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Email",
@@ -22,6 +23,7 @@ class _RegisterState extends State<Register> {
     final passwordField = TextField(
       obscureText: true,
       style: style,
+      onChanged: (value) {},
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
@@ -62,13 +64,13 @@ class _RegisterState extends State<Register> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
-                  height: 155.0,
-                  child: Image.asset(
-                    "assets/logo.png",
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                // SizedBox(
+                //   height: 155.0,
+                //   child: Image.asset(
+                //     "assets/logo.png",
+                //     fit: BoxFit.contain,
+                //   ),
+                // ),
                 SizedBox(height: 45.0),
                 emailField,
                 SizedBox(height: 25.0),
