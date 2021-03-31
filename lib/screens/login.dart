@@ -1,3 +1,5 @@
+import 'package:cryptostonks/screens/consume_api.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -8,6 +10,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final _auth = FirebaseAuth.instance;
   String email;
   String password;
   @override
@@ -43,7 +46,17 @@ class _LoginState extends State<Login> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {},
+        onPressed: () async {
+          try {
+            final currentUser = await _auth.signInWithEmailAndPassword(
+                email: email, password: password);
+            if (currentUser != null) {
+              Navigator.pushNamed(context, ConsumeAPI.id);
+            }
+          } catch (e) {
+            print(e);
+          }
+        },
         child: Text("Login",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -61,13 +74,6 @@ class _LoginState extends State<Login> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
-                  height: 155.0,
-                  child: Image.asset(
-                    "assets/logo.png",
-                    fit: BoxFit.contain,
-                  ),
-                ),
                 SizedBox(height: 45.0),
                 emailField,
                 SizedBox(height: 25.0),
