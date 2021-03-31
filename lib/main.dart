@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cryptostonks/screens/welcome_screen.dart';
 import 'package:cryptostonks/screens/consume_api.dart';
 import 'package:cryptostonks/screens/register.dart';
+import 'package:cryptostonks/screens/login.dart';
 
 void main() {
   runApp(CryptoStonks());
@@ -20,6 +21,7 @@ class CryptoStonks extends StatelessWidget {
           'welcome_screen': (context) => WelcomeScreen(),
           'consume_api': (context) => ConsumeAPI(),
           'register': (context) => Register(),
+          'login': (context) => Login(),
         });
   }
 }
