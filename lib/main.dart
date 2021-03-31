@@ -9,7 +9,9 @@ import 'package:cryptostonks/screens/login.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(CryptoStonks());
 }
 
@@ -21,12 +23,12 @@ class MyApp extends StatelessWidget {
             textTheme: TextTheme(
           bodyText1: TextStyle(color: Colors.black54),
         )),
-        initialRoute: 'register',
+        initialRoute: WelcomeScreen.id,
         routes: {
-          'welcome_screen': (context) => WelcomeScreen(),
-          'consume_api': (context) => ConsumeAPI(),
-          'register': (context) => Register(),
-          'login': (context) => Login(),
+          WelcomeScreen.id: (context) => WelcomeScreen(),
+          ConsumeAPI.id: (context) => ConsumeAPI(),
+          Register.id: (context) => Register(),
+          Login.id: (context) => Login(),
         });
   }
 }

@@ -1,19 +1,28 @@
+import 'package:cryptostonks/screens/consume_api.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Register extends StatefulWidget {
+  static String id = 'register';
   @override
   _RegisterState createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final _auth = FirebaseAuth.instance;
+  String email;
+  String password;
+
   @override
   Widget build(BuildContext context) {
     final emailField = TextField(
+      keyboardType: TextInputType.emailAddress,
       obscureText: false,
       style: style,
-      onChanged: (value) {},
+      onChanged: (value) {
+        email = value;
+      },
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Email",
@@ -23,7 +32,9 @@ class _RegisterState extends State<Register> {
     final passwordField = TextField(
       obscureText: true,
       style: style,
-      onChanged: (value) {},
+      onChanged: (value) {
+        password = value;
+      },
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
@@ -46,7 +57,17 @@ class _RegisterState extends State<Register> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {},
+        onPressed: () async {
+          try {
+            final newUser = await _auth.createUserWithEmailAndPassword(
+                email: email, password: password);
+            if (newUser != null) {
+              Navigator.pushNamed(context, ConsumeAPI.id);
+            }
+          } catch (e) {
+            print(e);
+          }
+        },
         child: Text("Register",
             textAlign: TextAlign.center,
             style: style.copyWith(
