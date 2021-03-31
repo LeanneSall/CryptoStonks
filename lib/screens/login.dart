@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
+  static String id = 'login';
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  String email;
+  String password;
   @override
   Widget build(BuildContext context) {
     final emailField = TextField(
       obscureText: false,
       style: style,
+      onChanged: (value) {
+        email = value;
+      },
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Email",
@@ -21,6 +27,9 @@ class _LoginState extends State<Login> {
     final passwordField = TextField(
       obscureText: true,
       style: style,
+      onChanged: (value) {
+        password = value;
+      },
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
