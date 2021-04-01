@@ -1,3 +1,4 @@
+import 'package:cryptostonks/components/network.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,15 +16,39 @@ class ConsumeAPI extends StatefulWidget {
 class _ConsumeAPIState extends State<ConsumeAPI> {
   final _auth = FirebaseAuth.instance;
   User loggedInUser;
-  var currentPrice = "";
-  String symbol = 'BTC';
-  String name;
+  var price = "000.00";
+  String symbol;
+  String name = 'Please Search';
   String searchValue;
 
   @override
   void initState() {
     super.initState();
     getCurrentUser();
+    grabData("bitcoin");
+  }
+
+  void grabData(searchValue) async {
+    var uri = Uri.https('api.alternative.me', 'v1/ticker/$searchValue/');
+    Network network = Network(uri);
+    //  var name = currentPrice[0]['name'];
+    var cryptoData = await network.getData();
+    updateUI(cryptoData);
+    // print(currentPrice);
+  }
+
+  void updateUI(dynamic cryptoData) {
+    setState(() {
+      if (cryptoData == null) {
+        name:
+        "Please Search";
+        price:
+        'error';
+      }
+    });
+
+    name = cryptoData[0]["name"];
+    price = cryptoData[0]["price_usd"];
   }
 
   void getCurrentUser() async {
@@ -37,17 +62,6 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   }
 
   Widget build(BuildContext context) {
-    Future<String> getData(searchValue) async {
-      var uri = Uri.https('api.alternative.me', 'v2/ticker/$searchValue/');
-      http.Response response = await http.get(uri);
-
-      String data = response.body;
-      currentPrice = jsonDecode(data);
-
-      return currentPrice;
-      // print(currentPrice);
-    }
-
     final searchField = TextField(
       onChanged: (value) {
         searchValue = value;
@@ -57,7 +71,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
           hintText: "search",
           suffixIcon: IconButton(
               onPressed: () {
-                getData(searchValue);
+                grabData(searchValue);
               },
               icon: Icon(Icons.search)),
           border:
@@ -92,10 +106,36 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
       appBar: appBarHead,
       body: Container(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(height: 45.0),
             searchField,
-            ListTile(title: Text(currentPrice))
+            Container(
+              margin: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                  border: Border.all(width: 10, color: Colors.black38),
+                  borderRadius:
+                      const BorderRadius.all(const Radius.circular(8))),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Card(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Name: ' + name),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Price: ' + price),
+                    )
+                  ],
+                )),
+              ),
+            )
           ],
         ),
       ),
