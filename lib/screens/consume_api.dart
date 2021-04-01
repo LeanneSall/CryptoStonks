@@ -1,9 +1,10 @@
-import 'package:cryptostonks/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:cryptostonks/screens/welcome_screen.dart';
 import 'dart:developer';
+import 'package:cryptostonks/apiKey.dart';
 
 class ConsumeAPI extends StatefulWidget {
   static String id = 'consume_api';
@@ -14,9 +15,10 @@ class ConsumeAPI extends StatefulWidget {
 class _ConsumeAPIState extends State<ConsumeAPI> {
   final _auth = FirebaseAuth.instance;
   User loggedInUser;
-  double currentPrice;
-  String symbol;
+  var currentPrice = "";
+  String symbol = 'BTC';
   String name;
+  String searchValue;
 
   @override
   void initState() {
@@ -35,34 +37,38 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   }
 
   Widget build(BuildContext context) {
-    void getData() async {
-      http.Response response = await http.get(Uri.https(
-          "https://api.coingecko.com",
-          "/api/v3/coins/dopecoin?tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true"));
+    Future<String> getData(searchValue) async {
+      var uri = Uri.https('api.alternative.me', 'v2/ticker/$searchValue/');
+      http.Response response = await http.get(uri);
 
-      if (response.statusCode == 200) {
-        String data = response.body;
+      String data = response.body;
+      currentPrice = jsonDecode(data);
 
-        var decodedData = jsonDecode(data);
-
-        currentPrice = decodedData['market_data']['current_price']['cad'];
-        symbol = decodedData['symbol'];
-        name = decodedData['name'];
-      }
+      return currentPrice;
+      // print(currentPrice);
     }
 
-    final appHeadBar = AppBar(
+    final searchField = TextField(
+      onChanged: (value) {
+        searchValue = value;
+      },
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "search",
+          suffixIcon: IconButton(
+              onPressed: () {
+                getData(searchValue);
+              },
+              icon: Icon(Icons.search)),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+
+    final appBarHead = AppBar(
       title: const Text('CryptoStonks'),
       automaticallyImplyLeading: false,
       elevation: 5.0,
       actions: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(right: 20.0),
-          child: Icon(
-            Icons.search,
-            size: 26.0,
-          ),
-        ),
         Padding(
           padding: EdgeInsets.only(right: 20.0),
           child: Icon(Icons.favorite),
@@ -83,15 +89,13 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     );
 
     return Scaffold(
-      appBar: appHeadBar,
+      appBar: appBarHead,
       body: Container(
         child: Column(
           children: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(top: 20.0, right: 20.0),
-                child: SizedBox(
-                  child: Text(currentPrice.toString()),
-                ))
+            SizedBox(height: 45.0),
+            searchField,
+            ListTile(title: Text(currentPrice))
           ],
         ),
       ),
