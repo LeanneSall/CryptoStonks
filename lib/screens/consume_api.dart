@@ -61,6 +61,12 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     });
   }
 
+  void getFromDB() async {
+    DocumentSnapshot variable =
+        await FirebaseFirestore.instance.collection('users').doc(doc).get();
+    print(variable["cryptocurrencies"]);
+  }
+
   void getCurrentUser() async {
     try {
       final User user = await _auth.currentUser;
