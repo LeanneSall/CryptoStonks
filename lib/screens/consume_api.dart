@@ -24,6 +24,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   String symbol;
   String name = 'Please Search';
   String searchValue;
+  String doc;
 
   @override
   void initState() {
@@ -33,11 +34,16 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   }
 
   void grabData(searchValue) async {
-    var uri = Uri.https('api.alternative.me', 'v1/ticker/$searchValue/');
-    Network network = Network(uri);
-    //  var name = currentPrice[0]['name'];
-    var cryptoData = await network.getData();
-    updateUI(cryptoData);
+    try {
+      var uri = Uri.https('api.alternative.me', 'v1/ticker/$searchValue/');
+      Network network = Network(uri);
+      //  var name = currentPrice[0]['name'];
+      var cryptoData = await network.getData();
+      updateUI(cryptoData);
+    } catch (e) {
+      var data = null;
+      updateUI(data);
+    }
     // print(currentPrice);
   }
 
@@ -45,23 +51,20 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     setState(() {
       if (cryptoData == null) {
         name:
-        "Please Search";
+        "";
         price:
         'error';
+      } else {
+        name = cryptoData[0]["name"];
+        price = cryptoData[0]["price_usd"];
       }
     });
-
-    name = cryptoData[0]["name"];
-    price = cryptoData[0]["price_usd"];
   }
 
   void getCurrentUser() async {
     try {
       final User user = await _auth.currentUser;
-      final doc = user.uid;
-      CollectionReference users =
-          FirebaseFirestore.instance.collection('users');
-      var userData = users.doc(doc).get();
+      doc = user.uid;
 
       if (user != null) {
         loggedInUser = user;
