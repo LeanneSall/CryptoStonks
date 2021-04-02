@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:cryptostonks/screens/welcome_screen.dart';
 import 'dart:developer';
 import 'package:cryptostonks/apiKey.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ConsumeAPI extends StatefulWidget {
   static String id = 'consume_api';
@@ -15,7 +16,10 @@ class ConsumeAPI extends StatefulWidget {
 
 class _ConsumeAPIState extends State<ConsumeAPI> {
   final _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   User loggedInUser;
+  var money;
+  Map crypto = {};
   var price = "000.00";
   String symbol;
   String name = 'Please Search';
@@ -25,7 +29,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   void initState() {
     super.initState();
     getCurrentUser();
-    grabData("bitcoin");
+    grabData("");
   }
 
   void grabData(searchValue) async {
@@ -54,6 +58,10 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   void getCurrentUser() async {
     try {
       final User user = await _auth.currentUser;
+      final doc = user.uid;
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
+      var userData = users.doc(doc).get();
 
       if (user != null) {
         loggedInUser = user;
@@ -80,7 +88,8 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
 
     final appBarHead = AppBar(
       title: const Text('CryptoStonks'),
-      automaticallyImplyLeading: false,
+      // automaticallyImplyLeading: false,
+
       elevation: 5.0,
       actions: <Widget>[
         Padding(
@@ -104,10 +113,31 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
 
     return Scaffold(
       appBar: appBarHead,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+                child: Text('50,000'),
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                )),
+            ListTile(
+              title: Text('Portfolio'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            )
+          ],
+        ),
+      ),
       body: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 45.0),
             searchField,
@@ -131,7 +161,14 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Price: ' + price),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('You have 0 ' + name),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('You have \$50,000 dollars')),
                   ],
                 )),
               ),
