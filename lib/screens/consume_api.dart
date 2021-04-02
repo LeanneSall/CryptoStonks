@@ -30,6 +30,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   void initState() {
     super.initState();
     getCurrentUser();
+    getFromDB();
     grabData("");
   }
 
