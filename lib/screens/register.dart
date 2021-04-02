@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:cryptostonks/screens/consume_api.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Register extends StatefulWidget {
   static String id = 'register';
@@ -11,8 +14,10 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   final _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   String email;
   String password;
+  double start = 50000;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +67,15 @@ class _RegisterState extends State<Register> {
             final newUser = await _auth.createUserWithEmailAndPassword(
                 email: email, password: password);
             if (newUser != null) {
+              final user = newUser.user.uid;
+              CollectionReference users =
+                  FirebaseFirestore.instance.collection('users');
+              users.doc(user).set({
+                'money': start,
+                'cryptocurrencies': {
+                  'bitcoin': 0.00005,
+                }
+              });
               Navigator.pushNamed(context, ConsumeAPI.id);
             }
           } catch (e) {
