@@ -259,6 +259,14 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
 
                                                             grabData(
                                                                 searchValue);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pushNamed(
+                                                                    ConsumeAPI
+                                                                        .id);
                                                           } catch (e) {
                                                             print(e);
                                                           }
