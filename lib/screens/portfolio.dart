@@ -71,9 +71,6 @@ class _PortfolioState extends State<Portfolio> {
           await FirebaseFirestore.instance.collection('users').doc(doc).get();
       money = variable['money'];
       crypto = variable['cryptocurrencies'];
-      for (int i = 0; i < crypto.length; i++) {
-        print(crypto[i]['name']);
-      }
     } catch (e) {
       print(e);
     }

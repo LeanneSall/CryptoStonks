@@ -20,14 +20,16 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   final _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   User loggedInUser;
-  var money = 50000;
+  num money = 50000;
   var crypto;
-  var price = "000.00";
+  num price = 0.00;
   String symbol;
   String name = 'coin name';
   String doc;
   String searchValue = "bitcoin";
   num currentCrypto = 0.00;
+  double purchasePrice;
+  num amount;
   DocumentSnapshot variable;
 
   //var searchCoin = 0.00;
@@ -36,7 +38,6 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   void initState() {
     super.initState();
     getCurrentUser();
-    getFromDB();
     grabData("bitcoin");
   }
 
@@ -61,10 +62,11 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
         name:
         "";
         price:
-        'error';
+        0.00;
       } else {
         name = cryptoData[0]["name"];
-        price = cryptoData[0]["price_usd"];
+        price = num.parse(cryptoData[0]["price_usd"]);
+        print(price);
         try {} catch (e) {
           print(e);
         }
@@ -75,17 +77,12 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   void haveCoin() async {
     try {
       currentCrypto = variable['cryptocurrencies'][searchValue];
+      money = variable['money'];
+      if (currentCrypto == null) {
+        currentCrypto = 0.00;
+      }
     } catch (e) {
       //searchCoin = 0;
-    }
-  }
-
-  void getFromDB() async {
-    try {
-      // DocumentSnapshot variable =
-      //     await FirebaseFirestore.instance.collection('users').doc(doc).get();
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -100,6 +97,10 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
             await FirebaseFirestore.instance.collection('users').doc(doc).get();
       }
     } catch (e) {}
+  }
+
+  void pp() {
+    // purchasePrice = double.parse(price);
   }
 
   Widget build(BuildContext context) {
@@ -192,7 +193,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Price: ' + price),
+                      child: Text('Price: $price'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -225,7 +226,11 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
-                                                  child: TextFormField(),
+                                                  child: TextFormField(
+                                                    onChanged: (value) => {
+                                                      amount = num.parse(value)
+                                                    },
+                                                  ),
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
@@ -233,7 +238,31 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                           .spaceAround,
                                                   children: <Widget>[
                                                     ElevatedButton(
-                                                        onPressed: () {},
+                                                        onPressed: () {
+                                                          try {
+                                                            pp();
+                                                            Buy(
+                                                                    price,
+                                                                    money,
+                                                                    name.toLowerCase(),
+                                                                    amount,
+                                                                    doc)
+                                                                .updateCrypto();
+
+                                                            Buy(
+                                                                    price,
+                                                                    money,
+                                                                    name.toLowerCase(),
+                                                                    amount,
+                                                                    doc)
+                                                                .updateMoney();
+
+                                                            grabData(
+                                                                searchValue);
+                                                          } catch (e) {
+                                                            print(e);
+                                                          }
+                                                        },
                                                         child: Text('Buy')),
                                                     ElevatedButton(
                                                         onPressed: () {
