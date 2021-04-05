@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cryptostonks/screens/portfolio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cryptostonks/screens/welcome_screen.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           ConsumeAPI.id: (context) => ConsumeAPI(),
           Register.id: (context) => Register(),
           Login.id: (context) => Login(),
+          Portfolio.id: (context) => Portfolio(),
         });
   }
 }

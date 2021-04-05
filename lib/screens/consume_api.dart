@@ -1,4 +1,5 @@
 import 'package:cryptostonks/components/network.dart';
+import 'package:cryptostonks/screens/portfolio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +23,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   Map crypto = {};
   var price = "000.00";
   String symbol;
-  String name = 'Please Search';
+  String name = 'coin name';
   String searchValue;
   String doc;
 
@@ -31,7 +32,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     super.initState();
     getCurrentUser();
     getFromDB();
-    grabData("");
+    grabData("bitcoin");
   }
 
   void grabData(searchValue) async {
@@ -97,7 +98,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     );
 
     final appBarHead = AppBar(
-      title: const Text('CryptoStonks'),
+      title: const Text('Search'),
       // automaticallyImplyLeading: false,
 
       elevation: 5.0,
@@ -128,17 +129,14 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-                child: Text('50,000'),
+                child: Text(money.toString()),
                 decoration: BoxDecoration(
                   color: Colors.grey[400],
                 )),
             ListTile(
               title: Text('Portfolio'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
+                Navigator.pushNamed(context, Portfolio.id);
               },
             )
           ],
@@ -150,7 +148,9 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 45.0),
-            searchField,
+            Padding(
+                padding: EdgeInsetsDirectional.only(bottom: 40),
+                child: searchField),
             Container(
               margin: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -161,7 +161,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                 padding: const EdgeInsets.all(5.0),
                 child: Card(
                     child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
@@ -179,6 +179,21 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                     Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text('You have \$50,000 dollars')),
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            label: Text('Buy'),
+                            icon: Icon(Icons.add),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: () {},
+                            label: Text('Sell'),
+                            icon: Icon(Icons.delete),
+                          )
+                        ])
                   ],
                 )),
               ),
