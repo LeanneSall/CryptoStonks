@@ -8,6 +8,7 @@ import 'package:cryptostonks/screens/welcome_screen.dart';
 import 'dart:developer';
 import 'package:cryptostonks/apiKey.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cryptostonks/components/buy.dart';
 
 class ConsumeAPI extends StatefulWidget {
   static String id = 'consume_api';
@@ -19,13 +20,17 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   final _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   User loggedInUser;
-  var money;
-  Map crypto = {};
+  var money = 50000;
+  var crypto;
   var price = "000.00";
   String symbol;
   String name = 'coin name';
-  String searchValue;
   String doc;
+  String searchValue = "bitcoin";
+  num currentCrypto = 0.00;
+  DocumentSnapshot variable;
+
+  //var searchCoin = 0.00;
 
   @override
   void initState() {
@@ -42,6 +47,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
       //  var name = currentPrice[0]['name'];
       var cryptoData = await network.getData();
       updateUI(cryptoData);
+      haveCoin();
     } catch (e) {
       var data = null;
       updateUI(data);
@@ -59,14 +65,28 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
       } else {
         name = cryptoData[0]["name"];
         price = cryptoData[0]["price_usd"];
+        try {} catch (e) {
+          print(e);
+        }
       }
     });
   }
 
+  void haveCoin() async {
+    try {
+      currentCrypto = variable['cryptocurrencies'][searchValue];
+    } catch (e) {
+      //searchCoin = 0;
+    }
+  }
+
   void getFromDB() async {
-    DocumentSnapshot variable =
-        await FirebaseFirestore.instance.collection('users').doc(doc).get();
-    print(variable["cryptocurrencies"]);
+    try {
+      // DocumentSnapshot variable =
+      //     await FirebaseFirestore.instance.collection('users').doc(doc).get();
+    } catch (e) {
+      print(e);
+    }
   }
 
   void getCurrentUser() async {
@@ -76,6 +96,8 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
 
       if (user != null) {
         loggedInUser = user;
+        variable =
+            await FirebaseFirestore.instance.collection('users').doc(doc).get();
       }
     } catch (e) {}
   }
@@ -174,22 +196,105 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('You have 0 ' + name),
+                      child: Text(
+                          "You have " + currentCrypto.toString() + " " + name),
                     ),
                     Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('You have \$50,000 dollars')),
+                        child: Text('You have $money dollars')),
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Stack(
+                                          overflow: Overflow.visible,
+                                          children: <Widget>[
+                                            Form(
+                                                child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Title(
+                                                  child: Text('Buy $name'),
+                                                  color: Colors.grey[300],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: TextFormField(),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: <Widget>[
+                                                    ElevatedButton(
+                                                        onPressed: () {},
+                                                        child: Text('Buy')),
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Text('Cancel'))
+                                                  ],
+                                                )
+                                              ],
+                                            ))
+                                          ]),
+                                    );
+                                  });
+                            },
                             label: Text('Buy'),
                             icon: Icon(Icons.add),
                           ),
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Stack(
+                                          overflow: Overflow.visible,
+                                          children: <Widget>[
+                                            Form(
+                                                child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Title(
+                                                  child: Text('Sell $name'),
+                                                  color: Colors.grey[300],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: TextFormField(),
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: <Widget>[
+                                                    ElevatedButton(
+                                                        onPressed: () {},
+                                                        child: Text('Sell')),
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Text('Cancel'))
+                                                  ],
+                                                )
+                                              ],
+                                            ))
+                                          ]),
+                                    );
+                                  });
+                            },
                             label: Text('Sell'),
                             icon: Icon(Icons.delete),
                           )

@@ -66,9 +66,17 @@ class _PortfolioState extends State<Portfolio> {
   }
 
   void getFromDB() async {
-    DocumentSnapshot variable =
-        await FirebaseFirestore.instance.collection('users').doc(doc).get();
-    print(variable["cryptocurrencies"]);
+    try {
+      DocumentSnapshot variable =
+          await FirebaseFirestore.instance.collection('users').doc(doc).get();
+      money = variable['money'];
+      crypto = variable['cryptocurrencies'];
+      for (int i = 0; i < crypto.length; i++) {
+        print(crypto[i]['name']);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void getCurrentUser() async {
@@ -83,6 +91,34 @@ class _PortfolioState extends State<Portfolio> {
   }
 
   Widget build(BuildContext context) {
+    final cryptos = Container(
+      margin: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+          border: Border.all(width: 10, color: Colors.black38),
+          borderRadius: const BorderRadius.all(const Radius.circular(8))),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Card(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Name: ' + name),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Price: ' + price),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('You have 0 ' + name),
+            ),
+          ],
+        )),
+      ),
+    );
     final appBarHead = AppBar(
       title: const Text('Portfolio'),
       // automaticallyImplyLeading: false,
@@ -136,7 +172,7 @@ class _PortfolioState extends State<Portfolio> {
             SizedBox(height: 45.0),
             Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('You have \$50,000 dollars')),
+                child: Text('You have $money dollars')),
             Container(
               margin: const EdgeInsets.all(4),
               decoration: BoxDecoration(
