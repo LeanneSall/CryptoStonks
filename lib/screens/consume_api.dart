@@ -1,4 +1,5 @@
 import 'package:cryptostonks/components/network.dart';
+import 'package:cryptostonks/components/sell.dart';
 import 'package:cryptostonks/screens/portfolio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -246,7 +247,8 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                                     money,
                                                                     name.toLowerCase(),
                                                                     amount,
-                                                                    doc)
+                                                                    doc,
+                                                                    currentCrypto)
                                                                 .updateCrypto();
 
                                                             Buy(
@@ -254,7 +256,8 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                                     money,
                                                                     name.toLowerCase(),
                                                                     amount,
-                                                                    doc)
+                                                                    doc,
+                                                                    currentCrypto)
                                                                 .updateMoney();
 
                                                             grabData(
@@ -308,7 +311,10 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.all(8.0),
-                                                  child: TextFormField(),
+                                                  child: TextFormField(
+                                                      onChanged: (value) {
+                                                    amount = num.parse(value);
+                                                  }),
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
@@ -316,7 +322,34 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                           .spaceAround,
                                                   children: <Widget>[
                                                     ElevatedButton(
-                                                        onPressed: () {},
+                                                        onPressed: () {
+                                                          pp();
+                                                          Sell(
+                                                            price,
+                                                            money,
+                                                            name.toLowerCase(),
+                                                            amount,
+                                                            doc,
+                                                            currentCrypto,
+                                                          ).updateCrypto();
+
+                                                          Sell(
+                                                                  price,
+                                                                  money,
+                                                                  name.toLowerCase(),
+                                                                  amount,
+                                                                  doc,
+                                                                  currentCrypto)
+                                                              .updateMoney();
+
+                                                          grabData(searchValue);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          Navigator.of(context)
+                                                              .pushNamed(
+                                                                  ConsumeAPI
+                                                                      .id);
+                                                        },
                                                         child: Text('Sell')),
                                                     ElevatedButton(
                                                         onPressed: () {
