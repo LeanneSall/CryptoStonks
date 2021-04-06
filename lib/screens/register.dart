@@ -74,7 +74,9 @@ class _RegisterState extends State<Register> {
                 'money': start,
                 'cryptocurrencies': {
                   'bitcoin': 0.00005,
-                }
+                },
+                'buying': {},
+                'selling': {},
               });
               Navigator.pushNamed(context, ConsumeAPI.id);
             }
