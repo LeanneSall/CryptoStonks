@@ -32,14 +32,20 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   double purchasePrice;
   num amount;
   DocumentSnapshot variable;
+  CollectionReference db;
 
   //var searchCoin = 0.00;
 
   @override
   void initState() {
+    loading();
     super.initState();
     getCurrentUser();
     grabData("bitcoin");
+  }
+
+  void loading() async {
+    await new Future.delayed(const Duration(seconds: 3));
   }
 
   void grabData(searchValue) async {
@@ -76,12 +82,15 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
   }
 
   void haveCoin() async {
+    db = await FirebaseFirestore.instance.collection('users');
     try {
       currentCrypto = variable['cryptocurrencies'][searchValue];
       money = variable['money'];
+
       if (currentCrypto == null) {
         currentCrypto = 0.00;
       }
+      loading == false;
     } catch (e) {
       //searchCoin = 0;
     }
@@ -91,11 +100,21 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
     try {
       final User user = await _auth.currentUser;
       doc = user.uid;
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(doc)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          print(documentSnapshot['cryptocurrencies'].forEach((key, value) {
+            print(key);
+            print(value);
+          }));
+        }
+      });
 
       if (user != null) {
         loggedInUser = user;
-        variable =
-            await FirebaseFirestore.instance.collection('users').doc(doc).get();
       }
     } catch (e) {}
   }
@@ -114,6 +133,7 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
           hintText: "search",
           suffixIcon: IconButton(
               onPressed: () {
+                loading();
                 grabData(searchValue);
               },
               icon: Icon(Icons.search)),
@@ -160,7 +180,8 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
             ListTile(
               title: Text('Portfolio'),
               onTap: () {
-                Navigator.pushNamed(context, Portfolio.id);
+                Navigator.pushNamed(context, Portfolio.id,
+                    arguments: {'doc': doc});
               },
             )
           ],
@@ -238,6 +259,11 @@ class _ConsumeAPIState extends State<ConsumeAPI> {
                                                       MainAxisAlignment
                                                           .spaceAround,
                                                   children: <Widget>[
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          getCurrentUser();
+                                                        },
+                                                        child: Text('ahhh')),
                                                     ElevatedButton(
                                                         onPressed: () {
                                                           try {
